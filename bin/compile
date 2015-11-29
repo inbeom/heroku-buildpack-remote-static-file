@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+BUILD_DIR=$1
+ENV_DIR=$3
+
+if [ -f "$ENV_DIR/REMOTE_STATIC_FILE_FROM" ]; then
+  REMOTE_STATIC_FILE_FROM=$(cat "$ENV_DIR/REMOTE_STATIC_FILE_FROM")
+else
+  echo "REMOTE_STATIC_FILE_FROM is not set"
+  exit 1
+fi
+
+if [ -f "$ENV_DIR/REMOTE_STATIC_FILE_TO" ]; then
+  REMOTE_STATIC_FILE_TO=$(cat "$ENV_DIR/REMOTE_STATIC_FILE_TO")
+fi
+
+DOWNLOAD_TARGET={$REMOTE_STATIC_FILE_TO:-remote}
+
+mkdir -p "$BUILD_DIR/static"
+
+echo "Fetching $REMOTE_STATIC_FILE_FROM to static/$DOWNLOAD_TARGET"
+curl -o "$BUILD_DIR/static/$DOWNLOAD_TARGET" $REMOTE_STATIC_FILE_FROM
